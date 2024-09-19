@@ -33,173 +33,6 @@ class _ScoreBoardState extends State<ScoreBoard> {
     });
   }
 
-  // void _incrementCounterA() {
-  //   setState(() {
-  //     _countA++;
-  //     if ((_countb + 2) == _countA && _countb >= 20 ||
-  //         (_countA >= 21 && _countb <= 20)) {
-  //       _countA = 0;
-  //       _countb = 0;
-  //       _set++;
-  //       _winA++;
-  //       if (_set >= 4) {
-  //         showDialog(
-  //           context: context,
-  //           builder: (context) => AlertDialog(
-  //             title: Text(_winA > _winB ? 'Win Team A' : 'Win Team B'),
-  //             content: const Text(''),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.pushNamed(context, '/');
-  //                 },
-  //                 child: const Text('Ok'),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       } else {
-  //         showDialog(
-  //           context: context,
-  //           builder: (context) => AlertDialog(
-  //             title: const Text("Win"),
-  //             content: const Text(''),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 },
-  //                 child: const Text('Close'),
-  //               ),
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.pushNamed(context, '/scoreboard');
-  //                 },
-  //                 child: const Text('Ok'),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       }
-  //     } else if (_countA == _countb && _countb >= 20) {
-  //       showDialog(
-  //         context: context,
-  //         builder: (context) => AlertDialog(
-  //           title: const Text("deuce"),
-  //           content: const Text('err'),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text('Close'),
-  //             ),
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.pushNamed(context, '/scoreboard');
-  //               },
-  //               child: const Text('Ok'),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //       // _countA++;
-  //     }
-  //   });
-  // }
-
-  // void _incrementCounterB() {
-  //   setState(() {
-  //     _countb++;
-  //     if (_set >= 4) {
-  //       showDialog(
-  //         context: context,
-  //         builder: (context) => AlertDialog(
-  //           title: Text(_winA > _winB ? 'Win Team A' : 'Win Team B'),
-  //           content: const Text(''),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.pushNamed(context, '/');
-  //               },
-  //               child: const Text('Ok'),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     }
-  //     if ((_countA + 2) == _countb && _countA >= 20 ||
-  //         (_countb >= 21 && _countA <= 20)) {
-  //       _countA = 0;
-  //       _countb = 0;
-  //       _set++;
-  //       _winB++;
-  //       if (_set >= 4) {
-  //         showDialog(
-  //           context: context,
-  //           builder: (context) => AlertDialog(
-  //             title: Text(_winA > _winB ? 'Win Team A' : 'Win Team B'),
-  //             content: const Text(''),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.pushNamed(context, '/');
-  //                 },
-  //                 child: const Text('Ok'),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       } else {
-  //         showDialog(
-  //           context: context,
-  //           builder: (context) => AlertDialog(
-  //             title: const Text("Win"),
-  //             content: const Text(''),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 },
-  //                 child: const Text('Close'),
-  //               ),
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.pushNamed(context, '/scoreboard');
-  //                 },
-  //                 child: const Text('Ok'),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       }
-  //     } else if (_countb == _countA && _countA >= 20) {
-  //       showDialog(
-  //         context: context,
-  //         builder: (context) => AlertDialog(
-  //           title: const Text("deuce"),
-  //           content: const Text('err'),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text('Close'),
-  //             ),
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.pushNamed(context, '/scoreboard');
-  //               },
-  //               child: const Text('Ok'),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //       // _countA++;
-  //     }
-  //   });
-  // }
-
   void _incrementCounterA() {
     setState(() {
       _countA++;
@@ -226,20 +59,14 @@ class _ScoreBoardState extends State<ScoreBoard> {
     }
 
     if (_isSetWin(scoreA, scoreB, isTeamA)) {
-      print("scoreA$scoreA");
-      print("scoreb$scoreB");
-      print("object$isTeamA");
       _countA = 0;
       _countb = 0;
       _set++;
-      if (((scoreB + 2) == scoreA && scoreB >= 20) ||
-          (scoreA + 2) == scoreB && scoreA >= 20) {
-        print("object$isTeamA");
-        // if (isTeamA) {
-        //   _winA++;
-        // } else {
-        //   _winB++;
-        // }
+
+      if (isTeamA) {
+        _winA++;
+      } else {
+        _winB++;
       }
 
       _set >= 4 ? _showFinalWinDialog() : _showSetWinDialog();
@@ -247,23 +74,6 @@ class _ScoreBoardState extends State<ScoreBoard> {
   }
 
   bool _isSetWin(int scoreA, int scoreB, bool isTeamA) {
-    print('object1');
-    print({
-      isTeamA && (scoreA == 21 && scoreB <= 19) ||
-          (scoreA > 20 && scoreA - scoreB >= 2)
-    });
-    print('object2');
-    print({
-      !isTeamA && (scoreB == 21 && scoreA <= 19) ||
-          (scoreB > 20 && scoreB - scoreA >= 2)
-    });
-    print('object3');
-    print({
-      isTeamA && (scoreA == 21 && scoreB <= 19) ||
-          (scoreA > 20 && scoreA - scoreB >= 2) ||
-          !isTeamA && (scoreB == 21 && scoreA <= 19) ||
-          (scoreB > 20 && scoreB - scoreA >= 2)
-    });
     return (isTeamA && (scoreA == 21 && scoreB <= 19) ||
         (scoreA > 20 && scoreA - scoreB >= 2) ||
         !isTeamA && (scoreB == 21 && scoreA <= 19) ||
