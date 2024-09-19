@@ -1,7 +1,14 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> _saveScore(String jsonScore) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('jsonScoreAll', jsonScore); // Save the JSON string
+}
 
 class ScoreBoard extends StatefulWidget {
   const ScoreBoard({super.key});
@@ -11,9 +18,13 @@ class ScoreBoard extends StatefulWidget {
 }
 
 class _ScoreBoardState extends State<ScoreBoard> {
+  String jsonScore = "[]";
+  String jsonScoreAll = "[]";
   int _countA = 0;
   int _countb = 0;
   int _set = 1;
+  final int _maxSet = 3;
+  final int _setMaxScore = 11;
   int _winA = 0;
   int _winB = 0;
 
@@ -48,7 +59,7 @@ class _ScoreBoardState extends State<ScoreBoard> {
   }
 
   void _checkSetWin(int scoreA, int scoreB, {required bool isTeamA}) {
-    if ((_set >= 4) || _isGameWon(scoreA, scoreB)) {
+    if ((_set >= _maxSet + 1) || _isGameWon(scoreA, scoreB)) {
       _showFinalWinDialog();
       return;
     }
@@ -59,6 +70,15 @@ class _ScoreBoardState extends State<ScoreBoard> {
     }
 
     if (_isSetWin(scoreA, scoreB, isTeamA)) {
+      // Parse the existing jsonScore string into a List
+      List<dynamic> currentData = jsonDecode(jsonScore);
+
+      // Add new score data to the list
+      currentData.add({'team_A': _countA, 'team_B': _countb, 'set': _set});
+
+      // Convert the updated list back to a JSON string
+      jsonScore = jsonEncode(currentData);
+
       _countA = 0;
       _countb = 0;
       _set++;
@@ -69,23 +89,29 @@ class _ScoreBoardState extends State<ScoreBoard> {
         _winB++;
       }
 
-      _set >= 4 ? _showFinalWinDialog() : _showSetWinDialog();
+      _set >= _maxSet + 1 ? _showFinalWinDialog() : _showSetWinDialog();
     }
   }
 
   bool _isSetWin(int scoreA, int scoreB, bool isTeamA) {
-    return (isTeamA && (scoreA == 21 && scoreB <= 19) ||
-        (scoreA > 20 && scoreA - scoreB >= 2) ||
-        !isTeamA && (scoreB == 21 && scoreA <= 19) ||
-        (scoreB > 20 && scoreB - scoreA >= 2));
+    return (isTeamA && (scoreA == _setMaxScore && scoreB <= _setMaxScore - 2) ||
+        (scoreA > _setMaxScore - 1 && scoreA - scoreB >= 2) ||
+        !isTeamA && (scoreB == _setMaxScore && scoreA <= _setMaxScore - 2) ||
+        (scoreB > _setMaxScore - 1 && scoreB - scoreA >= 2));
   }
 
   bool _isDeuce(int scoreA, int scoreB) {
-    return scoreA == scoreB && scoreA >= 20;
+    return scoreA == scoreB && scoreA >= _setMaxScore - 1;
   }
 
   bool _isGameWon(int scoreA, int scoreB) {
-    return _set >= 4;
+    return _set >= _maxSet + 1;
+  }
+
+  String _generateDateTime() {
+    DateTime now = DateTime.now();
+    return DateFormat('yyyy-MM-dd HH:mm:ss')
+        .format(now); // Format date and time
   }
 
   void _showFinalWinDialog() {
@@ -96,8 +122,20 @@ class _ScoreBoardState extends State<ScoreBoard> {
         title: Text(_winA > _winB ? 'Win Team A' : 'Win Team B'),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/');
+            onPressed: () async {
+              // Parse the existing jsonScore string into a List
+              List<dynamic> currentData = jsonDecode(jsonScoreAll);
+              String currentDateTime = _generateDateTime();
+
+              // Add new score data to the list
+              currentData.add({currentDateTime: jsonScore});
+
+              // Convert the updated list back to a JSON string
+              jsonScoreAll = jsonEncode(currentData);
+              await _saveScore(jsonScoreAll);
+
+              // ignore: use_build_context_synchronously
+              Navigator.of(context).pushReplacementNamed('/');
             },
             child: const Text('Ok'),
           ),
