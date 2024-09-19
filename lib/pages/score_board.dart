@@ -13,6 +13,9 @@ class ScoreBoard extends StatefulWidget {
 class _ScoreBoardState extends State<ScoreBoard> {
   int _countA = 0;
   int _countb = 0;
+  int _set = 1;
+  int _winA = 0;
+  int _winB = 0;
 
   void _minCounterA() {
     setState(() {
@@ -25,21 +28,307 @@ class _ScoreBoardState extends State<ScoreBoard> {
   void _minCounterB() {
     setState(() {
       if (_countb > 0) {
-        _countA--;
+        _countb--;
       }
     });
   }
 
+  // void _incrementCounterA() {
+  //   setState(() {
+  //     _countA++;
+  //     if ((_countb + 2) == _countA && _countb >= 20 ||
+  //         (_countA >= 21 && _countb <= 20)) {
+  //       _countA = 0;
+  //       _countb = 0;
+  //       _set++;
+  //       _winA++;
+  //       if (_set >= 4) {
+  //         showDialog(
+  //           context: context,
+  //           builder: (context) => AlertDialog(
+  //             title: Text(_winA > _winB ? 'Win Team A' : 'Win Team B'),
+  //             content: const Text(''),
+  //             actions: [
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.pushNamed(context, '/');
+  //                 },
+  //                 child: const Text('Ok'),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       } else {
+  //         showDialog(
+  //           context: context,
+  //           builder: (context) => AlertDialog(
+  //             title: const Text("Win"),
+  //             content: const Text(''),
+  //             actions: [
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: const Text('Close'),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.pushNamed(context, '/scoreboard');
+  //                 },
+  //                 child: const Text('Ok'),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       }
+  //     } else if (_countA == _countb && _countb >= 20) {
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //           title: const Text("deuce"),
+  //           content: const Text('err'),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //               child: const Text('Close'),
+  //             ),
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.pushNamed(context, '/scoreboard');
+  //               },
+  //               child: const Text('Ok'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //       // _countA++;
+  //     }
+  //   });
+  // }
+
+  // void _incrementCounterB() {
+  //   setState(() {
+  //     _countb++;
+  //     if (_set >= 4) {
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //           title: Text(_winA > _winB ? 'Win Team A' : 'Win Team B'),
+  //           content: const Text(''),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.pushNamed(context, '/');
+  //               },
+  //               child: const Text('Ok'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }
+  //     if ((_countA + 2) == _countb && _countA >= 20 ||
+  //         (_countb >= 21 && _countA <= 20)) {
+  //       _countA = 0;
+  //       _countb = 0;
+  //       _set++;
+  //       _winB++;
+  //       if (_set >= 4) {
+  //         showDialog(
+  //           context: context,
+  //           builder: (context) => AlertDialog(
+  //             title: Text(_winA > _winB ? 'Win Team A' : 'Win Team B'),
+  //             content: const Text(''),
+  //             actions: [
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.pushNamed(context, '/');
+  //                 },
+  //                 child: const Text('Ok'),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       } else {
+  //         showDialog(
+  //           context: context,
+  //           builder: (context) => AlertDialog(
+  //             title: const Text("Win"),
+  //             content: const Text(''),
+  //             actions: [
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //                 child: const Text('Close'),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () {
+  //                   Navigator.pushNamed(context, '/scoreboard');
+  //                 },
+  //                 child: const Text('Ok'),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       }
+  //     } else if (_countb == _countA && _countA >= 20) {
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //           title: const Text("deuce"),
+  //           content: const Text('err'),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //               child: const Text('Close'),
+  //             ),
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.pushNamed(context, '/scoreboard');
+  //               },
+  //               child: const Text('Ok'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //       // _countA++;
+  //     }
+  //   });
+  // }
+
   void _incrementCounterA() {
     setState(() {
       _countA++;
+      _checkSetWin(_countA, _countb, isTeamA: true);
     });
   }
 
   void _incrementCounterB() {
     setState(() {
       _countb++;
+      _checkSetWin(_countA, _countb, isTeamA: false);
     });
+  }
+
+  void _checkSetWin(int scoreA, int scoreB, {required bool isTeamA}) {
+    if ((_set >= 4) || _isGameWon(scoreA, scoreB)) {
+      _showFinalWinDialog();
+      return;
+    }
+
+    if (_isDeuce(scoreA, scoreB)) {
+      _showDeuceDialog();
+      return;
+    }
+
+    if (_isSetWin(scoreA, scoreB, isTeamA)) {
+      print("scoreA$scoreA");
+      print("scoreb$scoreB");
+      print("object$isTeamA");
+      _countA = 0;
+      _countb = 0;
+      _set++;
+      if (((scoreB + 2) == scoreA && scoreB >= 20) ||
+          (scoreA + 2) == scoreB && scoreA >= 20) {
+        print("object$isTeamA");
+        // if (isTeamA) {
+        //   _winA++;
+        // } else {
+        //   _winB++;
+        // }
+      }
+
+      _set >= 4 ? _showFinalWinDialog() : _showSetWinDialog();
+    }
+  }
+
+  bool _isSetWin(int scoreA, int scoreB, bool isTeamA) {
+    print('object1');
+    print({
+      isTeamA && (scoreA == 21 && scoreB <= 19) ||
+          (scoreA > 20 && scoreA - scoreB >= 2)
+    });
+    print('object2');
+    print({
+      !isTeamA && (scoreB == 21 && scoreA <= 19) ||
+          (scoreB > 20 && scoreB - scoreA >= 2)
+    });
+    print('object3');
+    print({
+      isTeamA && (scoreA == 21 && scoreB <= 19) ||
+          (scoreA > 20 && scoreA - scoreB >= 2) ||
+          !isTeamA && (scoreB == 21 && scoreA <= 19) ||
+          (scoreB > 20 && scoreB - scoreA >= 2)
+    });
+    return (isTeamA && (scoreA == 21 && scoreB <= 19) ||
+        (scoreA > 20 && scoreA - scoreB >= 2) ||
+        !isTeamA && (scoreB == 21 && scoreA <= 19) ||
+        (scoreB > 20 && scoreB - scoreA >= 2));
+  }
+
+  bool _isDeuce(int scoreA, int scoreB) {
+    return scoreA == scoreB && scoreA >= 20;
+  }
+
+  bool _isGameWon(int scoreA, int scoreB) {
+    return _set >= 4;
+  }
+
+  void _showFinalWinDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(_winA > _winB ? 'Win Team A' : 'Win Team B'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/');
+            },
+            child: const Text('Ok'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSetWinDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Win"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Ok'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeuceDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Deuce"),
+        content: const Text('Both teams have equal score at 20+ points.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Ok'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -56,6 +345,31 @@ class _ScoreBoardState extends State<ScoreBoard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Score Board'),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (String result) {
+              // Handle menu item selection
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Selected: $result')),
+              );
+            },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem<String>(
+                value: 'Option 1',
+                child: Text('Option 1'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Option 2',
+                child: Text('Option 2'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Option 3',
+                child: Text('Option 3'),
+              ),
+            ],
+            icon: const Icon(Icons.more_vert), // Titik tiga menu icon
+          ),
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -119,15 +433,34 @@ class _ScoreBoardState extends State<ScoreBoard> {
                 right: 0,
                 child: Container(
                   padding: const EdgeInsets.all(20),
-                  child: const Text(
-                    "0",
-                    style: TextStyle(
+                  child: Text(
+                    "$_winA",
+                    style: const TextStyle(
                       fontSize: 30,
                     ),
                   ),
                 ),
               ),
             ]),
+          ),
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                const Text(
+                  'Set',
+                  style: TextStyle(
+                    fontSize: 40,
+                  ),
+                ),
+                Text(
+                  "$_set",
+                  style: const TextStyle(
+                    fontSize: 40,
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: Stack(children: [
@@ -180,9 +513,9 @@ class _ScoreBoardState extends State<ScoreBoard> {
               ),
               Container(
                 padding: const EdgeInsets.all(20),
-                child: const Text(
-                  "0",
-                  style: TextStyle(
+                child: Text(
+                  "$_winB",
+                  style: const TextStyle(
                     fontSize: 30,
                   ),
                 ),
