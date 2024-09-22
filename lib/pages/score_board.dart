@@ -18,13 +18,17 @@ class ScoreBoard extends StatefulWidget {
 }
 
 class _ScoreBoardState extends State<ScoreBoard> {
+  // late Map<String, dynamic> args;
+  Map<String, dynamic>? args;
+  int _maxSet = 3;
+  String teamA = "";
+  String teamB = "";
   String jsonScore = "[]";
   String jsonScoreAll = "[]";
   int _countA = 0;
   int _countb = 0;
   int _set = 1;
-  final int _maxSet = 3;
-  final int _setMaxScore = 11;
+  int _setMaxScore = 11;
   int _winA = 0;
   int _winB = 0;
 
@@ -182,6 +186,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
   @override
   void initState() {
     super.initState();
+
+    // print(args['maxScore']);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
@@ -190,6 +196,14 @@ class _ScoreBoardState extends State<ScoreBoard> {
 
   @override
   Widget build(BuildContext context) {
+    // if (args == null) {
+    args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    _setMaxScore =
+        int.tryParse(args?['maxScore']) as int; // Use null check here
+    _maxSet = int.tryParse(args?['maxScore']) as int; // Use null check here
+    teamA = (args?['TeamA']); // Use null check here
+    teamB = (args?['TeamB']);
+    // }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Score Board'),
@@ -266,9 +280,9 @@ class _ScoreBoardState extends State<ScoreBoard> {
                           ),
                         ),
                       ),
-                      const Text(
-                        "Team A",
-                        style: TextStyle(
+                      Text(
+                        teamA,
+                        style: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),
@@ -348,9 +362,9 @@ class _ScoreBoardState extends State<ScoreBoard> {
                           ),
                         ),
                       ),
-                      const Text(
-                        "Team B",
-                        style: TextStyle(
+                      Text(
+                        teamB,
+                        style: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),
