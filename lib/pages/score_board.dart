@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -56,6 +59,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
   }
 
   void _incrementCounterB() {
+    print(jsonDecode(jsonScore));
+
     setState(() {
       _countb++;
       _checkSetWin(_countA, _countb, isTeamA: false);
@@ -78,7 +83,13 @@ class _ScoreBoardState extends State<ScoreBoard> {
       List<dynamic> currentData = jsonDecode(jsonScore);
 
       // Add new score data to the list
-      currentData.add({'team_A': _countA, 'team_B': _countb, 'set': _set});
+      currentData.add({
+        // 'team_A': teamA,
+        // 'team_B': teamB,
+        '_countA': _countA,
+        '_countb': _countb,
+        'set': _set
+      });
 
       // Convert the updated list back to a JSON string
       jsonScore = jsonEncode(currentData);
@@ -118,6 +129,14 @@ class _ScoreBoardState extends State<ScoreBoard> {
         .format(now); // Format date and time
   }
 
+  Future<void> _loadScore() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      jsonScoreAll = prefs.getString('jsonScoreAll') ??
+          "[]"; // Load saved data or set default
+    });
+  }
+
   void _showFinalWinDialog() {
     showDialog(
       context: context,
@@ -129,10 +148,19 @@ class _ScoreBoardState extends State<ScoreBoard> {
             onPressed: () async {
               // Parse the existing jsonScore string into a List
               List<dynamic> currentData = jsonDecode(jsonScoreAll);
+              List<dynamic> jsonScore2 = jsonDecode(jsonScore);
+              var datapertandingan = {
+                'TeamA': teamA,
+                'TeamB': teamB,
+                'set': _maxSet,
+                'finelScoreA': _winA,
+                'finelScoreB': _winB,
+                'score': jsonScore2
+              };
               String currentDateTime = _generateDateTime();
 
               // Add new score data to the list
-              currentData.add({currentDateTime: jsonScore});
+              currentData.add({currentDateTime: datapertandingan});
 
               // Convert the updated list back to a JSON string
               jsonScoreAll = jsonEncode(currentData);
@@ -192,6 +220,7 @@ class _ScoreBoardState extends State<ScoreBoard> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    _loadScore();
   }
 
   @override
@@ -200,7 +229,7 @@ class _ScoreBoardState extends State<ScoreBoard> {
     args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     _setMaxScore =
         int.tryParse(args?['maxScore']) as int; // Use null check here
-    _maxSet = int.tryParse(args?['maxScore']) as int; // Use null check here
+    _maxSet = int.tryParse(args?['set']) as int; // Use null check here
     teamA = (args?['TeamA']); // Use null check here
     teamB = (args?['TeamB']);
     // }
@@ -210,10 +239,11 @@ class _ScoreBoardState extends State<ScoreBoard> {
         actions: [
           PopupMenuButton<String>(
             onSelected: (String result) {
-              // Handle menu item selection
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Selected: $result')),
-              );
+              print(result);
+              // Navigator.pushNamed(
+              //   context,
+              //   '/scoreboard',
+              // );
             },
             itemBuilder: (BuildContext context) => [
               const PopupMenuItem<String>(
@@ -305,23 +335,101 @@ class _ScoreBoardState extends State<ScoreBoard> {
               ),
             ]),
           ),
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                const Text(
-                  'Set',
-                  style: TextStyle(
-                    fontSize: 40,
+          SizedBox(
+            width: 105,
+            child: Expanded(
+              child: Column(
+                children: [
+                  const Text(
+                    'Set',
+                    style: TextStyle(
+                      fontSize: 40,
+                    ),
                   ),
-                ),
-                Text(
-                  "$_set",
-                  style: const TextStyle(
-                    fontSize: 40,
+                  Text(
+                    "$_set",
+                    style: const TextStyle(
+                      fontSize: 40,
+                    ),
                   ),
-                ),
-              ],
+                  Container(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceBetween, // Justify antara widget di Row
+
+                      children: [
+                        Container(
+                            margin: EdgeInsets.only(right: 2),
+                            color: Colors.amber,
+                            width: 50,
+                            height: 50,
+                            child: Center(
+                                child: Text(
+                              '$_winA',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ))),
+                        Container(
+                            margin: EdgeInsets.only(right: 2),
+                            color: Colors.amber,
+                            width: 50,
+                            height: 50,
+                            child: Center(
+                                child: Text(
+                              '$_winB',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ))),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: jsonDecode(jsonScore).length,
+                        itemBuilder: (context, index) {
+                          var matchData = jsonDecode(jsonScore)[index];
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment
+                                .spaceBetween, // Justify antara widget di Row
+
+                            children: [
+                              Container(
+                                  margin: EdgeInsets.only(right: 2, top: 2),
+                                  color: Colors.amber,
+                                  width: 50,
+                                  height: 50,
+                                  child: Center(
+                                      child: Text(
+                                    matchData['_countA'].toString(),
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ))),
+                              Container(
+                                  margin: EdgeInsets.only(right: 2, top: 2),
+                                  color: Colors.amber,
+                                  width: 50,
+                                  height: 50,
+                                  child: Center(
+                                      child: Text(
+                                    matchData['_countb'].toString(),
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ))),
+                            ],
+                          );
+                        }),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(

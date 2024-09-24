@@ -12,23 +12,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String jsonScoreAll = "";
-  Future<void> _loadScore() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      jsonScoreAll = prefs.getString('jsonScoreAll') ??
-          "[]"; // Load saved data or set default
-    });
-  }
-
-  // Future<void> _loadAndDeleteScores() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.remove('jsonScoreAll');
-  //   setState(() {
-  //     jsonScoreAll = prefs.getString('jsonScoreAll') ??
-  //         "[]"; // Load saved data or set default
-  //   });
-  //   // Remove the score data from SharedPreferences
-  // }
 
   final TextEditingController _teamAController = TextEditingController();
   final TextEditingController _teamBController = TextEditingController();
@@ -40,17 +23,19 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _setAController.text = '3';
-    _maxScoreController.text = '21';
-    _loadScore(); // Load existing scores when the page starts
-  }
-
-  @override
-  Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.green, // Warna latar belakang status bar
       statusBarIconBrightness: Brightness.light, // Warna ikon status bar
     ));
+    _setAController.text = '3';
+    _maxScoreController.text = '21';
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Scaffold(
@@ -60,6 +45,23 @@ class _HomePageState extends State<HomePage> {
             'Score Board',
             style: TextStyle(color: Colors.white),
           ),
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: (String result) {
+                Navigator.pushNamed(
+                  context,
+                  '/history',
+                );
+              },
+              itemBuilder: (BuildContext context) => [
+                const PopupMenuItem<String>(
+                  value: 'Option 1',
+                  child: Text('History'),
+                ),
+              ],
+              icon: const Icon(Icons.more_vert), // Titik tiga menu icon
+            ),
+          ],
           automaticallyImplyLeading: false,
         ),
         body: SingleChildScrollView(
@@ -169,20 +171,39 @@ class _HomePageState extends State<HomePage> {
                 width: MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      '/scoreboard',
-                      arguments: {
-                        'set': _setAController.text,
-                        'maxScore': _maxScoreController.text,
-                        'TeamA': _teamAController.text.isNotEmpty
-                            ? _teamAController.text
-                            : "Team A",
-                        'TeamB': _teamBController.text.isNotEmpty
-                            ? _teamBController.text
-                            : "Team B",
-                      },
-                    );
+                    if (int.parse(_setAController.text) > 3) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text(
+                              "Set Pertandingan tidak boleh lebih dari 3"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                _setAController.text = '3';
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Ok'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      Navigator.pushNamed(
+                        context,
+                        '/scoreboard',
+                        arguments: {
+                          'set': _setAController.text,
+                          'maxScore': _maxScoreController.text,
+                          'TeamA': _teamAController.text.isNotEmpty
+                              ? _teamAController.text
+                              : "Team A",
+                          'TeamB': _teamBController.text.isNotEmpty
+                              ? _teamBController.text
+                              : "Team B",
+                        },
+                      );
+                    }
                   },
                   child: const Text('Start'),
                 ),
