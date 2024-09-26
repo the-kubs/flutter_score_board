@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -59,8 +57,6 @@ class _ScoreBoardState extends State<ScoreBoard> {
   }
 
   void _incrementCounterB() {
-    print(jsonDecode(jsonScore));
-
     setState(() {
       _countb++;
       _checkSetWin(_countA, _countb, isTeamA: false);
@@ -94,8 +90,6 @@ class _ScoreBoardState extends State<ScoreBoard> {
       // Convert the updated list back to a JSON string
       jsonScore = jsonEncode(currentData);
 
-      _countA = 0;
-      _countb = 0;
       _set++;
 
       if (isTeamA) {
@@ -167,7 +161,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
               await _saveScore(jsonScoreAll);
 
               // ignore: use_build_context_synchronously
-              Navigator.of(context).pushReplacementNamed('/');
+
+              Navigator.pushReplacementNamed(context, '/home');
             },
             child: const Text('Ok'),
           ),
@@ -179,11 +174,51 @@ class _ScoreBoardState extends State<ScoreBoard> {
   void _showSetWinDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text("Win"),
+        title: Text(_countA > _countb ? 'Win Team A' : 'Win Team B'),
+        content: Container(
+          width: 120,
+          height: 50,
+          child: Row(
+            mainAxisAlignment:
+                MainAxisAlignment.center, // Justify antara widget di Row
+
+            children: [
+              Container(
+                  margin: const EdgeInsets.only(right: 2),
+                  color: Colors.amber,
+                  width: 50,
+                  height: 50,
+                  child: Center(
+                      child: Text(
+                    '$_countA',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ))),
+              Container(
+                  margin: const EdgeInsets.only(right: 2),
+                  color: Colors.amber,
+                  width: 50,
+                  height: 50,
+                  child: Center(
+                      child: Text(
+                    '$_countb',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ))),
+            ],
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () {
+              _countA = 0;
+              _countb = 0;
               Navigator.of(context).pop();
             },
             child: const Text('Ok'),
@@ -236,32 +271,6 @@ class _ScoreBoardState extends State<ScoreBoard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Score Board'),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (String result) {
-              print(result);
-              // Navigator.pushNamed(
-              //   context,
-              //   '/scoreboard',
-              // );
-            },
-            itemBuilder: (BuildContext context) => [
-              const PopupMenuItem<String>(
-                value: 'Option 1',
-                child: Text('Option 1'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Option 2',
-                child: Text('Option 2'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Option 3',
-                child: Text('Option 3'),
-              ),
-            ],
-            icon: const Icon(Icons.more_vert), // Titik tiga menu icon
-          ),
-        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -270,11 +279,11 @@ class _ScoreBoardState extends State<ScoreBoard> {
           },
         ),
       ),
-      body: Row(
-        children: [
-          Expanded(
-            child: Stack(children: [
-              GestureDetector(
+      body: Container(
+        child: Row(
+          children: [
+            Expanded(
+              child: GestureDetector(
                 onTap: _incrementCounterA,
                 child: Container(
                   color: Colors.blue,
@@ -321,38 +330,24 @@ class _ScoreBoardState extends State<ScoreBoard> {
                   ),
                 ),
               ),
-              Positioned(
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Text(
-                    "$_winA",
-                    style: const TextStyle(
-                      fontSize: 30,
-                    ),
-                  ),
-                ),
-              ),
-            ]),
-          ),
-          SizedBox(
-            width: 105,
-            child: Expanded(
+            ),
+            Container(
+              width: 105,
               child: Column(
                 children: [
                   const Text(
                     'Set',
                     style: TextStyle(
-                      fontSize: 40,
+                      fontSize: 24,
                     ),
                   ),
                   Text(
                     "$_set",
                     style: const TextStyle(
-                      fontSize: 40,
+                      fontSize: 24,
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: 50,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment
@@ -360,7 +355,7 @@ class _ScoreBoardState extends State<ScoreBoard> {
 
                       children: [
                         Container(
-                            margin: EdgeInsets.only(right: 2),
+                            margin: const EdgeInsets.only(right: 2),
                             color: Colors.amber,
                             width: 50,
                             height: 50,
@@ -373,7 +368,7 @@ class _ScoreBoardState extends State<ScoreBoard> {
                               ),
                             ))),
                         Container(
-                            margin: EdgeInsets.only(right: 2),
+                            margin: const EdgeInsets.only(right: 2),
                             color: Colors.amber,
                             width: 50,
                             height: 50,
@@ -399,7 +394,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
 
                             children: [
                               Container(
-                                  margin: EdgeInsets.only(right: 2, top: 2),
+                                  margin:
+                                      const EdgeInsets.only(right: 2, top: 2),
                                   color: Colors.amber,
                                   width: 50,
                                   height: 50,
@@ -412,7 +408,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
                                     ),
                                   ))),
                               Container(
-                                  margin: EdgeInsets.only(right: 2, top: 2),
+                                  margin:
+                                      const EdgeInsets.only(right: 2, top: 2),
                                   color: Colors.amber,
                                   width: 50,
                                   height: 50,
@@ -431,10 +428,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
                 ],
               ),
             ),
-          ),
-          Expanded(
-            child: Stack(children: [
-              GestureDetector(
+            Expanded(
+              child: GestureDetector(
                 onTap: _incrementCounterB,
                 child: Container(
                   color: Colors.green,
@@ -481,18 +476,9 @@ class _ScoreBoardState extends State<ScoreBoard> {
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(20),
-                child: Text(
-                  "$_winB",
-                  style: const TextStyle(
-                    fontSize: 30,
-                  ),
-                ),
-              ),
-            ]),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

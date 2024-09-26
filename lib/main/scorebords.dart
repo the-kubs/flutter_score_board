@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scorre_board_flutter/pages/appversion.dart';
 import 'package:scorre_board_flutter/pages/history.dart';
 import 'package:scorre_board_flutter/pages/home.dart';
 import 'package:scorre_board_flutter/pages/score_board.dart';
@@ -35,7 +36,8 @@ class MainScoreBords extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => const HomePage(),
+          '/': (context) => const AppVersionSplashScreenPage(),
+          '/home': (context) => const HomePage(),
           '/scoreboard': (context) => const ScoreBoard(),
           '/history': (context) => const HistoryPagState(),
         });

@@ -25,6 +25,7 @@ class _HistoryPagStateState extends State<HistoryPagState> {
   Future<void> _loadAndDeleteScores() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('jsonScoreAll');
+    if (!mounted) return;
     setState(() {
       jsonScoreAll = prefs.getString('jsonScoreAll') ??
           "[]"; // Load saved data or set default
@@ -49,7 +50,7 @@ class _HistoryPagStateState extends State<HistoryPagState> {
     try {
       jsonScore = jsonDecode(jsonScoreAll);
     } catch (e) {
-      print('Error parsing JSON: $e');
+      // print('Error parsing JSON: $e');
       jsonScore = [];
     }
     return Scaffold(
@@ -103,7 +104,7 @@ class _HistoryPagStateState extends State<HistoryPagState> {
                   child: ListView.builder(
                     itemCount: jsonScore.length,
                     itemBuilder: (context, index) {
-                      var matchData = jsonScore[index];
+                      var matchData = jsonScore.reversed.toList()[index];
                       String timestamp = matchData.keys
                           .first; // Ambil timestamp (misalnya: "2024-09-23 22:33:54") // Ambil nilai team_A dari index pertama
                       var matchList = matchData[
