@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:scorre_board_flutter/main/scorebords.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
-  runApp(const MyApp());
+  runApp(const MainScoreBords());
 }
 
 class MyApp extends StatelessWidget {
