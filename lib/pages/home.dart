@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scorre_board_flutter/components/input.dart';
+import 'package:scorre_board_flutter/utils/ads.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,6 +13,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String jsonScoreAll = "";
 
+  final RewardedAdManager _adManager = RewardedAdManager();
+
   final TextEditingController _teamAController = TextEditingController();
   final TextEditingController _teamBController = TextEditingController();
   final TextEditingController _setAController = TextEditingController();
@@ -22,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _adManager.loadRewardedAd();
+
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -47,10 +52,14 @@ class _HomePageState extends State<HomePage> {
           actions: [
             PopupMenuButton<String>(
               onSelected: (String result) {
-                Navigator.pushNamed(
-                  context,
-                  '/history',
-                );
+                _adManager.showRewardedAd(
+                    context,
+                    () => {
+                          Navigator.pushNamed(
+                            context,
+                            '/history',
+                          )
+                        });
               },
               itemBuilder: (BuildContext context) => [
                 const PopupMenuItem<String>(
@@ -188,20 +197,24 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     } else {
-                      Navigator.pushNamed(
-                        context,
-                        '/scoreboard',
-                        arguments: {
-                          'set': _setAController.text,
-                          'maxScore': _maxScoreController.text,
-                          'TeamA': _teamAController.text.isNotEmpty
-                              ? _teamAController.text
-                              : "Team A",
-                          'TeamB': _teamBController.text.isNotEmpty
-                              ? _teamBController.text
-                              : "Team B",
-                        },
-                      );
+                      _adManager.showRewardedAd(
+                          context,
+                          () => {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/scoreboard',
+                                  arguments: {
+                                    'set': _setAController.text,
+                                    'maxScore': _maxScoreController.text,
+                                    'TeamA': _teamAController.text.isNotEmpty
+                                        ? _teamAController.text
+                                        : "Team A",
+                                    'TeamB': _teamBController.text.isNotEmpty
+                                        ? _teamBController.text
+                                        : "Team B",
+                                  },
+                                )
+                              });
                     }
                   },
                   child: const Text('Start'),

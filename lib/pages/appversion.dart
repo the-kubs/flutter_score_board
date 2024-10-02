@@ -11,7 +11,7 @@ class AppVersionSplashScreenPage extends StatefulWidget {
 
 class _AppVersionSplashScreenPageState
     extends State<AppVersionSplashScreenPage> {
-  String _appVersion = "";
+  // String _appVersion = "";
   @override
   void initState() {
     super.initState();

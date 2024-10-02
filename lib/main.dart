@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:scorre_board_flutter/main/scorebords.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+  await dotenv.load(fileName: ".env");
   runApp(const MainScoreBords());
 }
 

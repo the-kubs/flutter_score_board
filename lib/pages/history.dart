@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
+import 'package:scorre_board_flutter/utils/ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryPagState extends StatefulWidget {
@@ -14,6 +16,12 @@ class HistoryPagState extends StatefulWidget {
 
 class _HistoryPagStateState extends State<HistoryPagState> {
   String jsonScoreAll = "";
+
+  final RewardedAdManager _adManager = RewardedAdManager();
+
+  BannerAd? _bannerAd;
+  bool _isAdLoaded = false;
+
   Future<void> _loadScore() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -30,8 +38,29 @@ class _HistoryPagStateState extends State<HistoryPagState> {
       jsonScoreAll = prefs.getString('jsonScoreAll') ??
           "[]"; // Load saved data or set default
     });
-    Navigator.of(context).pop();
+
+    _adManager.showRewardedAd(context, () => {Navigator.of(context).pop()});
     // Remove the score data from SharedPreferences
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = BannerAd(
+      adUnitId:
+          'ca-app-pub-6563023551129667/3502964104', // Ganti dengan Ad Unit ID Anda
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          setState(() {
+            _isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('Banner ad failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    )..load();
   }
 
   @override
@@ -42,6 +71,8 @@ class _HistoryPagStateState extends State<HistoryPagState> {
       DeviceOrientation.portraitUp,
     ]);
     _loadScore(); // Load existing scores when the page starts
+    _loadBannerAd();
+    _adManager.loadRewardedAd();
   }
 
   @override
@@ -100,6 +131,13 @@ class _HistoryPagStateState extends State<HistoryPagState> {
             )
           : Column(
               children: [
+                _isAdLoaded
+                    ? Container(
+                        width: _bannerAd!.size.width.toDouble(),
+                        height: _bannerAd!.size.height.toDouble(),
+                        child: AdWidget(ad: _bannerAd!),
+                      )
+                    : Text('Loading Ad...'),
                 Expanded(
                   child: ListView.builder(
                     itemCount: jsonScore.length,

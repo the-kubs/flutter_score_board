@@ -3,6 +3,9 @@
         android:label="Score Board"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-6563023551129667~7719806058"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

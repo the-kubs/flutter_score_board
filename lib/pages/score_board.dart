@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:scorre_board_flutter/utils/ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _saveScore(String jsonScore) async {
@@ -19,6 +19,7 @@ class ScoreBoard extends StatefulWidget {
 }
 
 class _ScoreBoardState extends State<ScoreBoard> {
+  final RewardedAdManager _adManager = RewardedAdManager();
   // late Map<String, dynamic> args;
   Map<String, dynamic>? args;
   int _maxSet = 3;
@@ -161,8 +162,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
               await _saveScore(jsonScoreAll);
 
               // ignore: use_build_context_synchronously
-
-              Navigator.pushReplacementNamed(context, '/home');
+              _adManager.showRewardedAd(context,
+                  () => {Navigator.pushReplacementNamed(context, '/home')});
             },
             child: const Text('Ok'),
           ),
@@ -219,7 +220,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
             onPressed: () {
               _countA = 0;
               _countb = 0;
-              Navigator.of(context).pop();
+              _adManager.showRewardedAd(
+                  context, () => {Navigator.of(context).pop()});
             },
             child: const Text('Ok'),
           ),
@@ -249,6 +251,7 @@ class _ScoreBoardState extends State<ScoreBoard> {
   @override
   void initState() {
     super.initState();
+    _adManager.loadRewardedAd();
 
     // print(args['maxScore']);
     SystemChrome.setPreferredOrientations([
