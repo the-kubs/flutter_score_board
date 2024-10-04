@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scorre_board_flutter/components/input.dart';
@@ -65,6 +66,7 @@ class _HomePageState extends State<HomePage> {
                             )
                           });
                 } else if (result == 'Go Premium') {
+                  FirebaseAnalytics.instance.logEvent(name: 'GoPremium');
                   if (await canLaunch(playStoreLink)) {
                     await launch(playStoreLink);
                   } else {

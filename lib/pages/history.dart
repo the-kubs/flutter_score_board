@@ -19,9 +19,6 @@ class _HistoryPagStateState extends State<HistoryPagState> {
 
   final RewardedAdManager _adManager = RewardedAdManager();
 
-  BannerAd? _bannerAd;
-  bool _isAdLoaded = false;
-
   Future<void> _loadScore() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -43,26 +40,6 @@ class _HistoryPagStateState extends State<HistoryPagState> {
     // Remove the score data from SharedPreferences
   }
 
-  void _loadBannerAd() {
-    _bannerAd = BannerAd(
-      adUnitId:
-          'ca-app-pub-6563023551129667/3502964104', // Ganti dengan Ad Unit ID Anda
-      size: AdSize.banner,
-      request: AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          setState(() {
-            _isAdLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('Banner ad failed to load: $error');
-          ad.dispose();
-        },
-      ),
-    )..load();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -71,8 +48,8 @@ class _HistoryPagStateState extends State<HistoryPagState> {
       DeviceOrientation.portraitUp,
     ]);
     _loadScore(); // Load existing scores when the page starts
-    _loadBannerAd();
     _adManager.loadRewardedAd();
+    _adManager.loadBannerAd();
   }
 
   @override
@@ -135,13 +112,23 @@ class _HistoryPagStateState extends State<HistoryPagState> {
                   child: ListView.builder(
                     itemCount: jsonScore.length,
                     itemBuilder: (context, index) {
-                      if (_isAdLoaded && index > 0 && index % 6 == 0) {
+                      if (_adManager.getBannerAd() != null &&
+                          index > 0 &&
+                          index % 6 == 0) {
                         // Menampilkan iklan setiap 5 data
-                        return _isAdLoaded
+                        return _adManager.getBannerAd() != null
                             ? Container(
-                                width: _bannerAd!.size.width.toDouble(),
-                                height: _bannerAd!.size.height.toDouble(),
-                                child: AdWidget(ad: _bannerAd!),
+                                width: _adManager
+                                    .getBannerAd()!
+                                    .size
+                                    .width
+                                    .toDouble(),
+                                height: _adManager
+                                    .getBannerAd()!
+                                    .size
+                                    .height
+                                    .toDouble(),
+                                child: AdWidget(ad: _adManager.getBannerAd()!),
                               )
                             : Text('Loading Ad...');
                       } else {

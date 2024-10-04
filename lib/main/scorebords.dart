@@ -5,6 +5,7 @@ import 'package:scorre_board_flutter/pages/history.dart';
 import 'package:scorre_board_flutter/pages/home.dart';
 import 'package:scorre_board_flutter/pages/score_board.dart';
 import 'package:scorre_board_flutter/utils/ads.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 class MainScoreBords extends StatefulWidget {
   const MainScoreBords({super.key});
@@ -15,6 +16,9 @@ class MainScoreBords extends StatefulWidget {
 
 class _MainScoreBordsState extends State<MainScoreBords> {
   final RewardedAdManager _adManager = RewardedAdManager();
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
   @override
   void initState() {
     super.initState();
@@ -49,11 +53,17 @@ class _MainScoreBordsState extends State<MainScoreBords> {
         ),
       ),
       initialRoute: '/',
+      navigatorObservers: <NavigatorObserver>[observer],
       routes: {
         '/': (context) => const AppVersionSplashScreenPage(),
-        '/home': (context) => const HomePage(),
-        '/scoreboard': (context) => const ScoreBoard(),
-        '/history': (context) => const HistoryPagState(),
+        '/home': (context) =>
+            analyticsScreenWrapper(const HomePage(), 'HomePage'),
+        '/scoreboard': (context) =>
+            analyticsScreenWrapper(const ScoreBoard(), 'ScoreBoard'),
+        '/history': (context) =>
+            analyticsScreenWrapper(const HistoryPagState(), 'HistoryPagState'),
+        '/listBuyBg': (context) =>
+            analyticsScreenWrapper(const HistoryPagState(), 'HistoryPagState')
       },
       builder: (context, child) {
         return Scaffold(
@@ -78,5 +88,10 @@ class _MainScoreBordsState extends State<MainScoreBords> {
         );
       },
     );
+  }
+
+  Widget analyticsScreenWrapper(Widget screen, String screenName) {
+    analytics.logScreenView(screenName: screenName, screenClass: screenName);
+    return screen;
   }
 }
