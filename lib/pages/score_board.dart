@@ -235,7 +235,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Deuce"),
-        content: const Text('Both teams have equal score at 20+ points.'),
+        content:
+            Text('Both teams have equal score at ${_setMaxScore}+ points.'),
         actions: [
           TextButton(
             onPressed: () {

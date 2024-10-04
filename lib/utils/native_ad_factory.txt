@@ -1,0 +1,43 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+class NativeAdFactory {
+  static void register() {
+    // Register the custom native ad factory
+    if (Platform.isAndroid) {
+      MobileAds.instance
+          .registerNativeAdFactory('listTile', (context) => ListTileNativeAd());
+    }
+  }
+}
+
+class ListTileNativeAd extends StatelessWidget {
+  final NativeAd ad;
+
+  ListTileNativeAd(this.ad);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(ad.headline ?? ''),
+      subtitle: Text(ad.body ?? ''),
+      leading: ad.icon != null
+          ? Container(
+              width: 50,
+              height: 50,
+              child: Image.network(ad.icon!.uri.toString()),
+            )
+          : null,
+      trailing: ad.callToAction != null
+          ? ElevatedButton(
+              onPressed: () {
+                ad.recordClick();
+              },
+              child: Text(ad.callToAction!),
+            )
+          : null,
+    );
+  }
+}

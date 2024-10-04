@@ -7,6 +7,8 @@ class RewardedAdManager {
   bool _isAdLoaded = false;
   BannerAd? _bannerAd;
   bool _isBannerAdLoaded = false;
+  NativeAd? _nativeAd;
+  bool _isNativeAdAdLoaded = false;
 
   String adUnitIdBanner = dotenv.env['BANNER_AD_UNIT_ID'] ?? '';
   void loadBannerAd() {
@@ -77,5 +79,30 @@ class RewardedAdManager {
     } else {
       print('Rewarded ad is not yet loaded');
     }
+  }
+
+  String adUnitId = dotenv.env['NATIVE_AD_UNIT_ID'] ?? '';
+  void loadNativeAd() {
+    _nativeAd = NativeAd(
+      adUnitId: adUnitId, // Ganti dengan Ad Unit ID Anda
+      factoryId: 'adFactoryExample',
+      listener: NativeAdListener(
+        onAdLoaded: (ad) {
+          _isNativeAdAdLoaded = true;
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          print('Native Ad failed to load: $error');
+        },
+      ),
+      request: AdRequest(),
+    );
+    _nativeAd!.load();
+  }
+
+  bool get isNativeAdAdLoaded => _isNativeAdAdLoaded;
+
+  NativeAd? getNativeAd() {
+    return _nativeAd;
   }
 }

@@ -35,7 +35,17 @@ class _AppVersionSplashScreenPageState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/playstore.jpg', width: 200, height: 200),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(
+                  20.0), // Ganti 20.0 dengan radius yang Anda inginkan
+
+              child: Image.asset(
+                'assets/images/playstore.png',
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
+            ),
             const SizedBox(height: 20),
             const Text(
               'V1.0.0',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scorre_board_flutter/components/input.dart';
 import 'package:scorre_board_flutter/utils/ads.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,6 +15,8 @@ class _HomePageState extends State<HomePage> {
   String jsonScoreAll = "";
 
   final RewardedAdManager _adManager = RewardedAdManager();
+  final String playStoreLink =
+      "https://play.google.com/store/apps/details?id=com.karyayudi.score_board_flutter";
 
   final TextEditingController _teamAController = TextEditingController();
   final TextEditingController _teamBController = TextEditingController();
@@ -51,20 +54,32 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: [
             PopupMenuButton<String>(
-              onSelected: (String result) {
-                _adManager.showRewardedAd(
-                    context,
-                    () => {
-                          Navigator.pushNamed(
-                            context,
-                            '/history',
-                          )
-                        });
+              onSelected: (String result) async {
+                if (result == 'Option 1') {
+                  _adManager.showRewardedAd(
+                      context,
+                      () => {
+                            Navigator.pushNamed(
+                              context,
+                              '/history',
+                            )
+                          });
+                } else if (result == 'Go Premium') {
+                  if (await canLaunch(playStoreLink)) {
+                    await launch(playStoreLink);
+                  } else {
+                    throw 'Could not launch $playStoreLink';
+                  }
+                }
               },
               itemBuilder: (BuildContext context) => [
                 const PopupMenuItem<String>(
                   value: 'Option 1',
                   child: Text('History'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'Go Premium',
+                  child: Text('Go Premium'),
                 ),
               ],
               icon: const Icon(Icons.more_vert), // Titik tiga menu icon

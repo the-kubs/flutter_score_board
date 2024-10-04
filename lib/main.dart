@@ -7,6 +7,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
   await dotenv.load(fileName: ".env");
+
   runApp(const MainScoreBords());
 }
 
