@@ -50,6 +50,7 @@ class _HistoryPagStateState extends State<HistoryPagState> {
     _loadScore(); // Load existing scores when the page starts
     _adManager.loadRewardedAd();
     _adManager.loadBannerAd();
+    _adManager.loadNativeAd();
   }
 
   @override
@@ -103,8 +104,23 @@ class _HistoryPagStateState extends State<HistoryPagState> {
         ],
       ),
       body: jsonScore.isEmpty
-          ? const Center(
-              child: Text('Data Tidak Tersedian'),
+          ? Column(
+              children: [
+                _adManager.getNativeAd() != null
+                    ? ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minWidth: 320, // minimum recommended width
+                          minHeight: 320, // minimum recommended height
+                          maxWidth: 400,
+                          maxHeight: 400,
+                        ),
+                        child: AdWidget(ad: _adManager.getNativeAd()!),
+                      )
+                    : Text(''),
+                const Center(
+                  child: Text('Data Tidak Tersedian'),
+                ),
+              ],
             )
           : Column(
               children: [

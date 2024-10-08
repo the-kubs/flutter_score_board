@@ -84,20 +84,44 @@ class RewardedAdManager {
   String adUnitId = dotenv.env['NATIVE_AD_UNIT_ID'] ?? '';
   void loadNativeAd() {
     _nativeAd = NativeAd(
-      adUnitId: adUnitId, // Ganti dengan Ad Unit ID Anda
-      factoryId: 'adFactoryExample',
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          _isNativeAdAdLoaded = true;
-        },
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          print('Native Ad failed to load: $error');
-        },
-      ),
-      request: AdRequest(),
-    );
-    _nativeAd!.load();
+        adUnitId: adUnitId, // Ganti dengan Ad Unit ID Anda
+        listener: NativeAdListener(
+          onAdLoaded: (ad) {
+            _isNativeAdAdLoaded = true;
+          },
+          onAdFailedToLoad: (ad, error) {
+            ad.dispose();
+            print('Native Ad failed to load: $error');
+          },
+        ),
+        request: AdRequest(), // Styling
+        nativeTemplateStyle: NativeTemplateStyle(
+            // Required: Choose a template.
+            templateType: TemplateType.medium,
+            // Optional: Customize the ad's style.
+            mainBackgroundColor: Colors.purple,
+            cornerRadius: 10.0,
+            callToActionTextStyle: NativeTemplateTextStyle(
+                textColor: Colors.cyan,
+                backgroundColor: Colors.red,
+                style: NativeTemplateFontStyle.monospace,
+                size: 16.0),
+            primaryTextStyle: NativeTemplateTextStyle(
+                textColor: Colors.red,
+                backgroundColor: Colors.cyan,
+                style: NativeTemplateFontStyle.italic,
+                size: 16.0),
+            secondaryTextStyle: NativeTemplateTextStyle(
+                textColor: Colors.green,
+                backgroundColor: Colors.black,
+                style: NativeTemplateFontStyle.bold,
+                size: 16.0),
+            tertiaryTextStyle: NativeTemplateTextStyle(
+                textColor: Colors.brown,
+                backgroundColor: Colors.amber,
+                style: NativeTemplateFontStyle.normal,
+                size: 16.0)))
+      ..load();
   }
 
   bool get isNativeAdAdLoaded => _isNativeAdAdLoaded;
