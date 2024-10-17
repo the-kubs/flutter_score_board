@@ -38,7 +38,7 @@ class _AppVersionSplashScreenPageState
             Image.asset('assets/images/playstore.jpg', width: 200, height: 200),
             const SizedBox(height: 20),
             const Text(
-              'V1.0.0',
+              'V1.1.0',
               style: TextStyle(fontSize: 18),
             ),
           ],

@@ -1,0 +1,87 @@
+{
+  "project_info": {
+    "project_number": "443236312049",
+    "project_id": "scoreboard-32285",
+    "storage_bucket": "scoreboard-32285.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443236312049:android:0afd5adbff97123e671a50",
+        "android_client_info": {
+          "package_name": "com.karyayudi.cek_ads_aja"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2Co-2dLOf54A61WpQ8p_qLEC25Nk3-4c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443236312049:android:ccfe9f06ae78219d671a50",
+        "android_client_info": {
+          "package_name": "com.karyayudi.pinpong"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2Co-2dLOf54A61WpQ8p_qLEC25Nk3-4c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443236312049:android:ffab05b8e5f26bf8671a50",
+        "android_client_info": {
+          "package_name": "com.karyayudi.score_board_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2Co-2dLOf54A61WpQ8p_qLEC25Nk3-4c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443236312049:android:04d7a582efe0885f671a50",
+        "android_client_info": {
+          "package_name": "com.karyayudi.score_board_flutter_free"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2Co-2dLOf54A61WpQ8p_qLEC25Nk3-4c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      },
+      "admob_app_id": "ca-app-pub-6563023551129667~7719806058"
+    }
+  ],
+  "configuration_version": "1"
+}
