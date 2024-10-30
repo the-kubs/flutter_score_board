@@ -51,6 +51,8 @@ class _HistoryPagStateState extends State<HistoryPagState> {
     _adManager.loadRewardedAd();
     _adManager.loadBannerAd();
     _adManager.loadNativeAd();
+    print('test');
+    print("test ${_adManager.getNativeAd()}");
   }
 
   @override
@@ -106,7 +108,8 @@ class _HistoryPagStateState extends State<HistoryPagState> {
       body: jsonScore.isEmpty
           ? Column(
               children: [
-                _adManager.getNativeAd() != null
+                _adManager.isNativeAdAdLoaded &&
+                        _adManager.getNativeAd() != null
                     ? ConstrainedBox(
                         constraints: const BoxConstraints(
                           minWidth: 320, // minimum recommended width
