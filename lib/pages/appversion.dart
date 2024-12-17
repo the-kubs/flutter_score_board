@@ -48,7 +48,7 @@ class _AppVersionSplashScreenPageState
             ),
             const SizedBox(height: 20),
             const Text(
-              'V1.0.0',
+              'V1.2.0',
               style: TextStyle(fontSize: 18),
             ),
           ],

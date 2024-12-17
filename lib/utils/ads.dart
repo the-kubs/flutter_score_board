@@ -7,6 +7,8 @@ class RewardedAdManager {
   bool _isAdLoaded = false;
   BannerAd? _bannerAd;
   bool _isBannerAdLoaded = false;
+  InterstitialAd? _interstitialAd;
+  bool _isInterstitialAdLoaded = false;
   NativeAd? _nativeAd;
   bool _isNativeAdAdLoaded = false;
 
@@ -36,6 +38,40 @@ class RewardedAdManager {
     return _bannerAd;
   }
 
+  void loadInterstitialAd() {
+    String adUnitId = dotenv.env['INTERSIAL_AD_UNIT_ID'] ?? '';
+    InterstitialAd.load(
+      adUnitId: adUnitId, // Ganti dengan Unit ID Anda
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _isInterstitialAdLoaded = true;
+          // Tambahkan listener untuk event
+          _interstitialAd?.fullScreenContentCallback =
+              FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (ad) {
+              ad.dispose();
+              loadInterstitialAd(); // Load ulang setelah iklan ditutup
+            },
+            onAdFailedToShowFullScreenContent: (ad, error) {
+              ad.dispose();
+            },
+          );
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          print('InterstitialAd failed to load: $error');
+        },
+      ),
+    );
+  }
+
+  bool get isInterstitialAdLoaded => _isInterstitialAdLoaded;
+
+  InterstitialAd? getInterstitialAd() {
+    return _interstitialAd;
+  }
+
   void loadRewardedAd() {
     String adUnitId = dotenv.env['REWARDED_AD_UNIT_ID'] ?? '';
     RewardedAd.load(
@@ -59,6 +95,7 @@ class RewardedAdManager {
     if (_isAdLoaded) {
       _rewardedAd.show(
         onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+          // _showRewardDialog();
           print('User earned reward: ${reward.amount}');
           onAdCompleted();
         },
@@ -81,8 +118,8 @@ class RewardedAdManager {
     }
   }
 
-  String adUnitId = dotenv.env['NATIVE_AD_UNIT_ID'] ?? '';
   void loadNativeAd() {
+    String adUnitId = dotenv.env['NATIVE_AD_UNIT_ID'] ?? '';
     _nativeAd = NativeAd(
       adUnitId: adUnitId,
       nativeTemplateStyle: NativeTemplateStyle(

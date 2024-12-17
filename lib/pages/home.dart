@@ -1,6 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:scorre_board_flutter/components/input.dart';
 import 'package:scorre_board_flutter/utils/ads.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -45,6 +46,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    void navigateToScoreboard() {
+      Navigator.pushNamed(
+        context,
+        '/scoreboard',
+        arguments: {
+          'set': _setAController.text,
+          'maxScore': _maxScoreController.text,
+          'TeamA': _teamAController.text.isNotEmpty
+              ? _teamAController.text
+              : "Team A",
+          'TeamB': _teamBController.text.isNotEmpty
+              ? _teamBController.text
+              : "Team B",
+        },
+      );
+    }
 
     return Scaffold(
         appBar: AppBar(
@@ -57,14 +74,35 @@ class _HomePageState extends State<HomePage> {
             PopupMenuButton<String>(
               onSelected: (String result) async {
                 if (result == 'Option 1') {
-                  _adManager.showRewardedAd(
+                  if (_adManager.isInterstitialAdLoaded &&
+                      _adManager.getInterstitialAd() != null) {
+                    _adManager.getInterstitialAd()!.show();
+                    _adManager.getInterstitialAd()!.fullScreenContentCallback =
+                        FullScreenContentCallback(
+                      onAdDismissedFullScreenContent: (ad) {
+                        // Menavigasi ke halaman detail setelah iklan ditutup
+
+                        Navigator.pushNamed(
+                          context,
+                          '/history',
+                        );
+                      },
+                      onAdFailedToShowFullScreenContent: (ad, error) {
+                        print('Failed to show interstitial ad: $error');
+
+                        Navigator.pushNamed(
+                          context,
+                          '/history',
+                        );
+                      },
+                    );
+                  } else {
+                    print('Interstitial ad not ready yet.');
+                    Navigator.pushNamed(
                       context,
-                      () => {
-                            Navigator.pushNamed(
-                              context,
-                              '/history',
-                            )
-                          });
+                      '/history',
+                    );
+                  }
                 } else if (result == 'Go Premium') {
                   FirebaseAnalytics.instance.logEvent(name: 'GoPremium');
                   if (await canLaunch(playStoreLink)) {
@@ -214,24 +252,28 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     } else {
-                      _adManager.showRewardedAd(
-                          context,
-                          () => {
-                                Navigator.pushNamed(
-                                  context,
-                                  '/scoreboard',
-                                  arguments: {
-                                    'set': _setAController.text,
-                                    'maxScore': _maxScoreController.text,
-                                    'TeamA': _teamAController.text.isNotEmpty
-                                        ? _teamAController.text
-                                        : "Team A",
-                                    'TeamB': _teamBController.text.isNotEmpty
-                                        ? _teamBController.text
-                                        : "Team B",
-                                  },
-                                )
-                              });
+                      if (_adManager.isInterstitialAdLoaded &&
+                          _adManager.getInterstitialAd() != null) {
+                        _adManager.getInterstitialAd()!.show();
+                        _adManager
+                                .getInterstitialAd()!
+                                .fullScreenContentCallback =
+                            FullScreenContentCallback(
+                          onAdDismissedFullScreenContent: (ad) {
+                            // Menavigasi ke halaman detail setelah iklan ditutup
+
+                            navigateToScoreboard();
+                          },
+                          onAdFailedToShowFullScreenContent: (ad, error) {
+                            print('Failed to show interstitial ad: $error');
+
+                            navigateToScoreboard();
+                          },
+                        );
+                      } else {
+                        print('Interstitial ad not ready yet.');
+                        navigateToScoreboard();
+                      }
                     }
                   },
                   child: const Text('Start'),

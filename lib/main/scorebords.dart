@@ -72,7 +72,8 @@ class _MainScoreBordsState extends State<MainScoreBords> {
               Column(
                 children: [
                   Expanded(child: child!), // Menampilkan konten halaman
-                  _adManager.getBannerAd() != null
+                  _adManager.isBannerAdLoaded &&
+                          _adManager.getBannerAd() != null
                       ? Container(
                           width:
                               _adManager.getBannerAd()!.size.width.toDouble(),
@@ -80,7 +81,7 @@ class _MainScoreBordsState extends State<MainScoreBords> {
                               _adManager.getBannerAd()!.size.height.toDouble(),
                           child: AdWidget(ad: _adManager.getBannerAd()!),
                         )
-                      : const Text('Loading Ad...'),
+                      : SizedBox(),
                 ],
               ),
             ],

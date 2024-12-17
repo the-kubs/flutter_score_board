@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:scorre_board_flutter/utils/ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -162,8 +163,27 @@ class _ScoreBoardState extends State<ScoreBoard> {
               await _saveScore(jsonScoreAll);
 
               // ignore: use_build_context_synchronously
-              _adManager.showRewardedAd(context,
-                  () => {Navigator.pushReplacementNamed(context, '/home')});
+              if (_adManager.isInterstitialAdLoaded &&
+                  _adManager.getInterstitialAd() != null) {
+                _adManager.getInterstitialAd()!.show();
+                _adManager.getInterstitialAd()!.fullScreenContentCallback =
+                    FullScreenContentCallback(
+                  onAdDismissedFullScreenContent: (ad) {
+                    // Menavigasi ke halaman detail setelah iklan ditutup
+
+                    Navigator.pushReplacementNamed(context, '/home');
+                  },
+                  onAdFailedToShowFullScreenContent: (ad, error) {
+                    print('Failed to show interstitial ad: $error');
+
+                    Navigator.pushReplacementNamed(context, '/home');
+                  },
+                );
+              } else {
+                print('Interstitial ad not ready yet.');
+                Navigator.pushReplacementNamed(context, '/home');
+              }
+              // Navigator.pushReplacementNamed(context, '/home');
             },
             child: const Text('Ok'),
           ),
@@ -220,8 +240,30 @@ class _ScoreBoardState extends State<ScoreBoard> {
             onPressed: () {
               _countA = 0;
               _countb = 0;
-              _adManager.showRewardedAd(
-                  context, () => {Navigator.of(context).pop()});
+              if (_adManager.isInterstitialAdLoaded &&
+                  _adManager.getInterstitialAd() != null) {
+                _adManager.getInterstitialAd()!.show();
+                _adManager.getInterstitialAd()!.fullScreenContentCallback =
+                    FullScreenContentCallback(
+                  onAdDismissedFullScreenContent: (ad) {
+                    // Menavigasi ke halaman detail setelah iklan ditutup
+
+                    Navigator.of(context).pop();
+                    ;
+                  },
+                  onAdFailedToShowFullScreenContent: (ad, error) {
+                    print('Failed to show interstitial ad: $error');
+
+                    Navigator.of(context).pop();
+                    ;
+                  },
+                );
+              } else {
+                print('Interstitial ad not ready yet.');
+
+                Navigator.of(context).pop();
+                ;
+              }
             },
             child: const Text('Ok'),
           ),

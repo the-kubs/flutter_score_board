@@ -36,7 +36,27 @@ class _HistoryPagStateState extends State<HistoryPagState> {
           "[]"; // Load saved data or set default
     });
 
-    _adManager.showRewardedAd(context, () => {Navigator.of(context).pop()});
+    if (_adManager.isInterstitialAdLoaded &&
+        _adManager.getInterstitialAd() != null) {
+      _adManager.getInterstitialAd()!.show();
+      _adManager.getInterstitialAd()!.fullScreenContentCallback =
+          FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          // Menavigasi ke halaman detail setelah iklan ditutup
+
+          Navigator.of(context).pop();
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          print('Failed to show interstitial ad: $error');
+
+          Navigator.of(context).pop();
+        },
+      );
+    } else {
+      print('Interstitial ad not ready yet.');
+
+      Navigator.of(context).pop();
+    }
     // Remove the score data from SharedPreferences
   }
 
@@ -131,7 +151,8 @@ class _HistoryPagStateState extends State<HistoryPagState> {
                   child: ListView.builder(
                     itemCount: jsonScore.length,
                     itemBuilder: (context, index) {
-                      if (_adManager.getBannerAd() != null &&
+                      if (_adManager.isBannerAdLoaded &&
+                          _adManager.getBannerAd() != null &&
                           index > 0 &&
                           index % 6 == 0) {
                         // Menampilkan iklan setiap 5 data
