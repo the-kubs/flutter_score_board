@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:scorre_board_flutter/utils/ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class HistoryPagState extends StatefulWidget {
   const HistoryPagState({super.key});
@@ -16,6 +18,11 @@ class HistoryPagState extends StatefulWidget {
 
 class _HistoryPagStateState extends State<HistoryPagState> {
   String jsonScoreAll = "";
+
+  bool _isNativeAdAdLoaded = false;
+  bool _isBannerAdLoaded = false;
+  BannerAd? _bannerAd;
+  NativeAd? _nativeAd;
 
   final RewardedAdManager _adManager = RewardedAdManager();
 
@@ -36,6 +43,7 @@ class _HistoryPagStateState extends State<HistoryPagState> {
           "[]"; // Load saved data or set default
     });
 
+    _adManager.loadInterstitialAd();
     if (_adManager.isInterstitialAdLoaded &&
         _adManager.getInterstitialAd() != null) {
       _adManager.getInterstitialAd()!.show();
@@ -60,6 +68,89 @@ class _HistoryPagStateState extends State<HistoryPagState> {
     // Remove the score data from SharedPreferences
   }
 
+  String adUnitIdBanner = dotenv.env['BANNER_AD_UNIT_ID'] ?? '';
+  void loadBannerAd() {
+    print("Banner ${adUnitIdBanner}");
+    _bannerAd = BannerAd(
+      adUnitId: adUnitIdBanner, // Ganti dengan Ad Unit ID Anda
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          _isBannerAdLoaded = true;
+          print('Banner Ad loaded');
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          _isBannerAdLoaded = false;
+          print('Banner ad failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    )..load();
+  }
+
+  String adUnitId = dotenv.env['NATIVE_AD_UNIT_ID'] ?? '';
+  void loadNativeAd123() {
+    _nativeAd = NativeAd(
+      adUnitId: adUnitId,
+      nativeTemplateStyle: NativeTemplateStyle(
+        // Choose a template type
+        templateType: TemplateType.medium,
+        // Customize the ad's style
+        mainBackgroundColor: Colors.purple,
+        cornerRadius: 10.0,
+        callToActionTextStyle: NativeTemplateTextStyle(
+          textColor: Colors.cyan,
+          backgroundColor: Colors.red,
+          style: NativeTemplateFontStyle.monospace,
+          size: 16.0,
+        ),
+        primaryTextStyle: NativeTemplateTextStyle(
+          textColor: Colors.red,
+          backgroundColor: Colors.cyan,
+          style: NativeTemplateFontStyle.italic,
+          size: 16.0,
+        ),
+        secondaryTextStyle: NativeTemplateTextStyle(
+          textColor: Colors.green,
+          backgroundColor: Colors.black,
+          style: NativeTemplateFontStyle.bold,
+          size: 16.0,
+        ),
+        tertiaryTextStyle: NativeTemplateTextStyle(
+          textColor: Colors.brown,
+          backgroundColor: Colors.amber,
+          style: NativeTemplateFontStyle.normal,
+          size: 16.0,
+        ),
+      ),
+      listener: NativeAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            print('Native Ad loaded');
+            _isNativeAdAdLoaded = true;
+            print('Native Ad loaded: $_isNativeAdAdLoaded');
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          print('Native Ad failed to load: $error');
+          ad.dispose(); // Dispose of the ad on failure
+        },
+        onAdOpened: (ad) {
+          print('Native Ad opened');
+        },
+        onAdClosed: (ad) {
+          print('Native Ad closed');
+          setState(() {
+            ad.dispose(); // Dispose of the ad when closed
+            _isNativeAdAdLoaded = false; // Reset the loaded status
+          });
+        },
+      ),
+      request: AdRequest(),
+    )..load(); // Load the ad
+  }
+
   @override
   void initState() {
     super.initState();
@@ -70,7 +161,9 @@ class _HistoryPagStateState extends State<HistoryPagState> {
     _loadScore(); // Load existing scores when the page starts
     _adManager.loadRewardedAd();
     _adManager.loadBannerAd();
-    _adManager.loadNativeAd();
+    _adManager.loadInterstitialAd();
+    loadNativeAd123();
+    // _adManager.loadNativeAd();
     print('test');
     print("test ${_adManager.getNativeAd()}");
   }
@@ -108,7 +201,9 @@ class _HistoryPagStateState extends State<HistoryPagState> {
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
                               const Color.fromARGB(255, 249, 168, 180))),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
                       child: const Text('No'),
                     ),
                   ],
@@ -126,51 +221,27 @@ class _HistoryPagStateState extends State<HistoryPagState> {
         ],
       ),
       body: jsonScore.isEmpty
-          ? Column(
-              children: [
-                _adManager.isNativeAdAdLoaded &&
-                        _adManager.getNativeAd() != null
-                    ? ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: 320, // minimum recommended width
-                          minHeight: 320, // minimum recommended height
-                          maxWidth: 400,
-                          maxHeight: 400,
-                        ),
-                        child: AdWidget(ad: _adManager.getNativeAd()!),
-                      )
-                    : Text(''),
-                const Center(
-                  child: Text('Data Tidak Tersedian'),
-                ),
-              ],
+          ? const SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  NativeAdComponent(),
+                  Center(
+                    child: Text('Data Tidak Tersedian'),
+                  ),
+                ],
+              ),
             )
           : Column(
               children: [
+                const BannerAdComponent(),
                 Expanded(
                   child: ListView.builder(
                     itemCount: jsonScore.length,
                     itemBuilder: (context, index) {
-                      if (_adManager.isBannerAdLoaded &&
-                          _adManager.getBannerAd() != null &&
-                          index > 0 &&
-                          index % 6 == 0) {
+                      if (index > 0 && index % 6 == 0) {
                         // Menampilkan iklan setiap 5 data
-                        return _adManager.getBannerAd() != null
-                            ? Container(
-                                width: _adManager
-                                    .getBannerAd()!
-                                    .size
-                                    .width
-                                    .toDouble(),
-                                height: _adManager
-                                    .getBannerAd()!
-                                    .size
-                                    .height
-                                    .toDouble(),
-                                child: AdWidget(ad: _adManager.getBannerAd()!),
-                              )
-                            : Text('Loading Ad...');
+                        return NativeAdComponent();
                       } else {
                         var matchData =
                             jsonScore.reversed.toList()[index - (index ~/ 6)];

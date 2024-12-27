@@ -162,6 +162,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
               jsonScoreAll = jsonEncode(currentData);
               await _saveScore(jsonScoreAll);
 
+              _adManager.loadInterstitialAd();
+
               // ignore: use_build_context_synchronously
               if (_adManager.isInterstitialAdLoaded &&
                   _adManager.getInterstitialAd() != null) {
@@ -240,6 +242,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
             onPressed: () {
               _countA = 0;
               _countb = 0;
+
+              _adManager.loadInterstitialAd();
               if (_adManager.isInterstitialAdLoaded &&
                   _adManager.getInterstitialAd() != null) {
                 _adManager.getInterstitialAd()!.show();
@@ -249,12 +253,14 @@ class _ScoreBoardState extends State<ScoreBoard> {
                     // Menavigasi ke halaman detail setelah iklan ditutup
 
                     Navigator.of(context).pop();
+                    _adManager.loadInterstitialAd();
                     ;
                   },
                   onAdFailedToShowFullScreenContent: (ad, error) {
                     print('Failed to show interstitial ad: $error');
 
                     Navigator.of(context).pop();
+                    _adManager.loadInterstitialAd();
                     ;
                   },
                 );
@@ -262,6 +268,7 @@ class _ScoreBoardState extends State<ScoreBoard> {
                 print('Interstitial ad not ready yet.');
 
                 Navigator.of(context).pop();
+                _adManager.loadInterstitialAd();
                 ;
               }
             },
@@ -295,6 +302,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
   void initState() {
     super.initState();
     _adManager.loadRewardedAd();
+    _adManager.loadInterstitialAd();
+    _adManager.loadBannerAd();
 
     // print(args['maxScore']);
     SystemChrome.setPreferredOrientations([

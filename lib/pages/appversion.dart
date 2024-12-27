@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppVersionSplashScreenPage extends StatefulWidget {
   const AppVersionSplashScreenPage({super.key});
@@ -11,11 +12,14 @@ class AppVersionSplashScreenPage extends StatefulWidget {
 
 class _AppVersionSplashScreenPageState
     extends State<AppVersionSplashScreenPage> {
+  static const platform = MethodChannel('com.example.app/version');
+  String flutterVersionName = "Loading...";
   // String _appVersion = "";
   @override
   void initState() {
     super.initState();
     // _getAppVersion();
+    _getFlutterVersionName();
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacementNamed(context, '/home');
     });
@@ -27,6 +31,20 @@ class _AppVersionSplashScreenPageState
   //     _appVersion = "Version: ${info.version} (${info.buildNumber})";
   //   });
   // }
+
+  Future<void> _getFlutterVersionName() async {
+    try {
+      final String result =
+          await platform.invokeMethod('getFlutterVersionName');
+      setState(() {
+        flutterVersionName = result;
+      });
+    } catch (e) {
+      setState(() {
+        flutterVersionName = 'Error: $e';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +65,8 @@ class _AppVersionSplashScreenPageState
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'V1.2.0',
+            Text(
+              flutterVersionName,
               style: TextStyle(fontSize: 18),
             ),
           ],

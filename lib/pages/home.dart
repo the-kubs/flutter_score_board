@@ -30,7 +30,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _adManager.loadBannerAd();
     _adManager.loadRewardedAd();
+    _adManager.loadInterstitialAd();
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -74,6 +76,7 @@ class _HomePageState extends State<HomePage> {
             PopupMenuButton<String>(
               onSelected: (String result) async {
                 if (result == 'Option 1') {
+                  _adManager.loadInterstitialAd();
                   if (_adManager.isInterstitialAdLoaded &&
                       _adManager.getInterstitialAd() != null) {
                     _adManager.getInterstitialAd()!.show();
@@ -252,6 +255,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     } else {
+                      _adManager.loadInterstitialAd();
                       if (_adManager.isInterstitialAdLoaded &&
                           _adManager.getInterstitialAd() != null) {
                         _adManager.getInterstitialAd()!.show();

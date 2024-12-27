@@ -23,6 +23,9 @@ class _MainScoreBordsState extends State<MainScoreBords> {
   void initState() {
     super.initState();
     _adManager.loadBannerAd();
+    _adManager.loadNativeAd();
+
+    print("Banner 2${_adManager.isBannerAdLoaded}");
   }
 
   @override
@@ -70,19 +73,7 @@ class _MainScoreBordsState extends State<MainScoreBords> {
           body: Stack(
             children: [
               Column(
-                children: [
-                  Expanded(child: child!), // Menampilkan konten halaman
-                  _adManager.isBannerAdLoaded &&
-                          _adManager.getBannerAd() != null
-                      ? Container(
-                          width:
-                              _adManager.getBannerAd()!.size.width.toDouble(),
-                          height:
-                              _adManager.getBannerAd()!.size.height.toDouble(),
-                          child: AdWidget(ad: _adManager.getBannerAd()!),
-                        )
-                      : SizedBox(),
-                ],
+                children: [Expanded(child: child!), BannerAdComponent()],
               ),
             ],
           ),

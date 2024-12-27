@@ -15,15 +15,10 @@ if (localPropertiesFile.exists()) {
     }
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
+// Mengambil nilai dari file .env
+def flutterVersionName = 'v1.2.4'
+def flutterVersionCode = 8
+def flutterCompileSdk = 34
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
@@ -33,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.example.scorre_board_flutter"
-    compileSdk flutter.compileSdkVersion
+    compileSdk flutterCompileSdk.toInteger()
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -50,15 +45,38 @@ android {
     }
 
     defaultConfig {
+        buildConfigField "String", "FLUTTER_VERSION_NAME", "\"${flutterVersionName}\""
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.karyayudi.score_board_flutter_free"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 28
-        targetSdkVersion 34
-        versionCode 4
-        versionName 'v1.2.0'
+        targetSdkVersion flutterCompileSdk.toInteger()
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
     }
+    
+
+    tasks.whenTaskAdded { task ->
+    if (task.name == "bundleRelease") {
+        task.doLast {
+                println "Mengganti  ${buildDir}"
+            def bundleDir = file("${buildDir}/outputs/bundle/release")
+            def originalFile = bundleDir.listFiles().find { it.name.endsWith(".aab") }
+            if (originalFile) {
+                def appId = android.defaultConfig.applicationId
+                def versionName = android.defaultConfig.versionName
+                def versionCode = android.defaultConfig.versionCode
+                def newFileName = "${appId}-v${versionName}-${versionCode}.aab"
+                def newFile = new File(bundleDir, newFileName)
+
+                println "Mengganti nama file ${originalFile.name} menjadi ${newFileName}"
+                originalFile.renameTo(newFile)
+            }
+        }
+    }
+}
+
 
     signingConfigs {
         release {
@@ -95,4 +113,6 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation 'com.google.android.gms:play-services-ads:22.4.0' // Versi terbaru
+}
