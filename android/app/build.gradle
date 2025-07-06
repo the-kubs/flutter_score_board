@@ -33,7 +33,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.example.scorre_board_flutter"
-    compileSdk flutter.compileSdkVersion
+    compileSdk 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -55,9 +55,9 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 28
-        targetSdkVersion 34
-        versionCode 2
-        versionName 'v1.1.1'
+        targetSdkVersion 35
+        versionCode 3
+        versionName 'v1.1.2'
     }
 
     signingConfigs {
@@ -82,4 +82,13 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation 'com.android.billingclient:billing:6.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+    // implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx:23.1.0'
+
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    // implementation 'com.google.android.libraries.recaptcha:recaptcha:18.5.1'
+}
