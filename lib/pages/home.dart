@@ -113,6 +113,15 @@ class _HomePageState extends State<HomePage> {
                   } else {
                     throw 'Could not launch $playStoreLink';
                   }
+                } else if (result == 'Go Premium') {
+                  FirebaseAnalytics.instance.logEvent(name: 'Kece');
+                  if (await canLaunch(
+                      'https://play.google.com/store/apps/dev?id=4725275750641681036&hl=en')) {
+                    await launch(
+                        'https://play.google.com/store/apps/dev?id=4725275750641681036&hl=en');
+                  } else {
+                    throw 'Could not launch $playStoreLink';
+                  }
                 }
               },
               itemBuilder: (BuildContext context) => [
@@ -123,6 +132,10 @@ class _HomePageState extends State<HomePage> {
                 const PopupMenuItem<String>(
                   value: 'Go Premium',
                   child: Text('Go Premium'),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'kece',
+                  child: Text('Aplikasi Kece Lainnya'),
                 ),
               ],
               icon: const Icon(Icons.more_vert), // Titik tiga menu icon

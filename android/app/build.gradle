@@ -16,9 +16,9 @@ if (localPropertiesFile.exists()) {
 }
 
 // Mengambil nilai dari file .env
-def flutterVersionName = 'v1.2.4'
-def flutterVersionCode = 8
-def flutterCompileSdk = 34
+def flutterVersionName = 'v1.2.5'
+def flutterVersionCode = 9
+def flutterCompileSdk = 35
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
@@ -55,27 +55,11 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
-    
-
-    tasks.whenTaskAdded { task ->
-    if (task.name == "bundleRelease") {
-        task.doLast {
-                println "Mengganti  ${buildDir}"
-            def bundleDir = file("${buildDir}/outputs/bundle/release")
-            def originalFile = bundleDir.listFiles().find { it.name.endsWith(".aab") }
-            if (originalFile) {
-                def appId = android.defaultConfig.applicationId
-                def versionName = android.defaultConfig.versionName
-                def versionCode = android.defaultConfig.versionCode
-                def newFileName = "${appId}-v${versionName}-${versionCode}.aab"
-                def newFile = new File(bundleDir, newFileName)
-
-                println "Mengganti nama file ${originalFile.name} menjadi ${newFileName}"
-                originalFile.renameTo(newFile)
-            }
-        }
+     buildFeatures {
+        buildConfig true
     }
-}
+
+   
 
 
     signingConfigs {
@@ -93,18 +77,7 @@ android {
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.release
             
-            applicationVariants.all { variant ->
-                variant.outputs.all { output ->
-                    // Mendapatkan applicationId, versionName, dan versionCode
-                    def appId = variant.applicationId
-                    def versionName = variant.versionName
-                    def versionCode = variant.versionCode
-
-                    // Menentukan format nama file
-                    def fileName = "${appId}-v${versionName}-${versionCode}.apk"
-                    outputFileName = fileName
-                }
-            }
+            
         }
     }
 }
@@ -114,5 +87,10 @@ flutter {
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-ads:22.4.0' // Versi terbaru
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+    // implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx:23.1.0'
+
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
 }
