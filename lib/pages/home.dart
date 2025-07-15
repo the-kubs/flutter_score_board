@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scorre_board_flutter/components/input.dart';
+import 'package:scorre_board_flutter/pages/chess.dart';
+import 'package:scorre_board_flutter/pages/rubic.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -207,15 +209,32 @@ class _HomePageState extends State<HomePage> {
                   child: const Text('Start'),
                 ),
               ),
-
-              // ElevatedButton(
-              //   onPressed: () {
-              //     _loadAndDeleteScores();
-              //     // Navigator.pushNamed(context, '/history');
-              //     // Aksi ketika tombol ditekan
-              //   },
-              //   child: const Text('Hisory'),
-              // ),
+              Container(
+                  padding: const EdgeInsets.all(16),
+                  width:
+                      MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ChessPage()),
+                      );
+                    },
+                    child: Text("Chess Clock"),
+                  )),
+              Container(
+                  padding: const EdgeInsets.all(16),
+                  width:
+                      MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RubicPage()),
+                      );
+                    },
+                    child: Text("Rubik’s Timer"),
+                  ))
             ],
           ),
         ));
