@@ -88,6 +88,9 @@ class _RubicPageState extends State<RubicPage> {
       setState(() {
         standby = true;
       });
+      if (game_start == true) {
+        _stopTimer(); // reset biar tidak terulang
+      }
       // kedua tombol ditekan, tunggu sampai salah satu dilepas
       print('Kedua tombol ditekan');
     } else if (game_start == false &&
@@ -98,8 +101,6 @@ class _RubicPageState extends State<RubicPage> {
         standby = false;
       });
       _startTimer();
-    } else if (game_start == true && (_tap_down_L || _tap_down_R)) {
-      _stopTimer(); // reset biar tidak terulang
     }
     print('pppppppppppppppppppppppppppppppppppppppppppppppppp');
   }

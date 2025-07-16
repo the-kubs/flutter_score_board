@@ -44,6 +44,12 @@ class RewardedAdManager {
 
   void loadInterstitialAd() {
     String adUnitId = dotenv.env['INTERSIAL_AD_UNIT_ID'] ?? '';
+
+    // SystemChrome.setEnabledSystemUIMode(
+    //   SystemUiMode.immersiveSticky,
+    //   overlays: [],
+    // );
+
     InterstitialAd.load(
       adUnitId: adUnitId, // Ganti dengan Unit ID Anda
       request: AdRequest(),
@@ -52,13 +58,18 @@ class RewardedAdManager {
           _interstitialAd = ad;
           _isInterstitialAdLoaded = true;
           // Tambahkan listener untuk event
+          print('jalan123');
+
+          _interstitialAd!.show();
           _interstitialAd?.fullScreenContentCallback =
               FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
+              // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
               ad.dispose();
-              loadInterstitialAd(); // Load ulang setelah iklan ditutup
+              // loadInterstitialAd(); // Load ulang setelah iklan ditutup
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
+              // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
               ad.dispose();
             },
           );

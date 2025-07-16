@@ -308,19 +308,19 @@ class _HomePageState extends State<HomePage> {
               //   child: const Text('Hisory'),
               // ),
 
-              Container(
-                  padding: const EdgeInsets.all(16),
-                  width:
-                      MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ChessPage()),
-                      );
-                    },
-                    child: Text("football scores"),
-                  )),
+              // Container(
+              //     padding: const EdgeInsets.all(16),
+              //     width:
+              //         MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
+              //     child: ElevatedButton(
+              //       onPressed: () {
+              //         Navigator.push(
+              //           context,
+              //           MaterialPageRoute(builder: (context) => ChessPage()),
+              //         );
+              //       },
+              //       child: Text("football scores"),
+              //     )),
               Container(
                   padding: const EdgeInsets.all(16),
                   width:
