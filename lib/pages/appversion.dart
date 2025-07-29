@@ -35,10 +35,11 @@ class _AppVersionSplashScreenPageState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/playstore.jpg', width: 200, height: 200),
+            Image.asset('assets/images/play_store_512.png',
+                width: 200, height: 200),
             const SizedBox(height: 20),
             const Text(
-              'V1.1.0',
+              'V1.2.x-pro',
               style: TextStyle(fontSize: 18),
             ),
           ],
