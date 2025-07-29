@@ -16,8 +16,8 @@ if (localPropertiesFile.exists()) {
 }
 
 // Mengambil nilai dari file .env
-def flutterVersionName = 'v1.3.1'
-def flutterVersionCode = 11
+def flutterVersionName = 'v1.3.2'
+def flutterVersionCode = 12
 def flutterCompileSdk = 35
 
 def keystoreProperties = new Properties()

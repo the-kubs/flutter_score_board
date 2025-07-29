@@ -78,36 +78,10 @@ class _HomePageState extends State<HomePage> {
             PopupMenuButton<String>(
               onSelected: (String result) async {
                 if (result == 'Option 1') {
-                  _adManager.loadInterstitialAd();
-                  if (_adManager.isInterstitialAdLoaded &&
-                      _adManager.getInterstitialAd() != null) {
-                    _adManager.getInterstitialAd()!.show();
-                    _adManager.getInterstitialAd()!.fullScreenContentCallback =
-                        FullScreenContentCallback(
-                      onAdDismissedFullScreenContent: (ad) {
-                        // Menavigasi ke halaman detail setelah iklan ditutup
-
-                        Navigator.pushNamed(
-                          context,
-                          '/history',
-                        );
-                      },
-                      onAdFailedToShowFullScreenContent: (ad, error) {
-                        print('Failed to show interstitial ad: $error');
-
-                        Navigator.pushNamed(
-                          context,
-                          '/history',
-                        );
-                      },
-                    );
-                  } else {
-                    print('Interstitial ad not ready yet.');
-                    Navigator.pushNamed(
-                      context,
-                      '/history',
-                    );
-                  }
+                  Navigator.pushNamed(
+                    context,
+                    '/history',
+                  );
                 } else if (result == 'Go Premium') {
                   FirebaseAnalytics.instance.logEvent(name: 'GoPremium');
                   if (await canLaunch(playStoreLink)) {
@@ -270,29 +244,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     } else {
-                      _adManager.loadInterstitialAd();
-                      if (_adManager.isInterstitialAdLoaded &&
-                          _adManager.getInterstitialAd() != null) {
-                        _adManager.getInterstitialAd()!.show();
-                        _adManager
-                                .getInterstitialAd()!
-                                .fullScreenContentCallback =
-                            FullScreenContentCallback(
-                          onAdDismissedFullScreenContent: (ad) {
-                            // Menavigasi ke halaman detail setelah iklan ditutup
-
-                            navigateToScoreboard();
-                          },
-                          onAdFailedToShowFullScreenContent: (ad, error) {
-                            print('Failed to show interstitial ad: $error');
-
-                            navigateToScoreboard();
-                          },
-                        );
-                      } else {
-                        print('Interstitial ad not ready yet.');
-                        navigateToScoreboard();
-                      }
+                      navigateToScoreboard();
                     }
                   },
                   child: const Text('Start'),

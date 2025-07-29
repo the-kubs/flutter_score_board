@@ -154,6 +154,7 @@ class _HistoryPagStateState extends State<HistoryPagState> {
   @override
   void initState() {
     super.initState();
+
     // print(args['maxScore']);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
