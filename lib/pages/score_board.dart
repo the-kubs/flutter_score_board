@@ -138,7 +138,7 @@ class _ScoreBoardState extends State<ScoreBoard> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text(_winA > _winB ? 'Win Team A' : 'Win Team B'),
+        title: Text(_winA > _winB ? 'Win ${teamA}' : 'Win ${teamB}'),
         actions: [
           TextButton(
             onPressed: () async {
@@ -162,30 +162,14 @@ class _ScoreBoardState extends State<ScoreBoard> {
               jsonScoreAll = jsonEncode(currentData);
               await _saveScore(jsonScoreAll);
 
-              _adManager.loadInterstitialAd();
-
-              // ignore: use_build_context_synchronously
-              if (_adManager.isInterstitialAdLoaded &&
-                  _adManager.getInterstitialAd() != null) {
-                _adManager.getInterstitialAd()!.show();
-                _adManager.getInterstitialAd()!.fullScreenContentCallback =
-                    FullScreenContentCallback(
-                  onAdDismissedFullScreenContent: (ad) {
-                    // Menavigasi ke halaman detail setelah iklan ditutup
-
-                    Navigator.pushReplacementNamed(context, '/home');
-                  },
-                  onAdFailedToShowFullScreenContent: (ad, error) {
-                    print('Failed to show interstitial ad: $error');
-
-                    Navigator.pushReplacementNamed(context, '/home');
-                  },
-                );
-              } else {
-                print('Interstitial ad not ready yet.');
-                Navigator.pushReplacementNamed(context, '/home');
-              }
-              // Navigator.pushReplacementNamed(context, '/home');
+              // print("2!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+              // _adManager.loadInterstitialAd(() {
+              //   if (context.mounted) {
+              //     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+              //   }
+              // });
+              Navigator.pushReplacementNamed(context, '/home');
+              // Navigator.of(context).pop();
             },
             child: const Text('Ok'),
           ),
@@ -244,32 +228,8 @@ class _ScoreBoardState extends State<ScoreBoard> {
               _countb = 0;
 
               _adManager.loadInterstitialAd();
-              if (_adManager.isInterstitialAdLoaded &&
-                  _adManager.getInterstitialAd() != null) {
-                _adManager.getInterstitialAd()!.show();
-                _adManager.getInterstitialAd()!.fullScreenContentCallback =
-                    FullScreenContentCallback(
-                  onAdDismissedFullScreenContent: (ad) {
-                    // Menavigasi ke halaman detail setelah iklan ditutup
-
-                    Navigator.of(context).pop();
-                    _adManager.loadInterstitialAd();
-                    ;
-                  },
-                  onAdFailedToShowFullScreenContent: (ad, error) {
-                    print('Failed to show interstitial ad: $error');
-
-                    Navigator.of(context).pop();
-                    _adManager.loadInterstitialAd();
-                    ;
-                  },
-                );
-              } else {
-                print('Interstitial ad not ready yet.');
-
+              if (context.mounted) {
                 Navigator.of(context).pop();
-                _adManager.loadInterstitialAd();
-                ;
               }
             },
             child: const Text('Ok'),

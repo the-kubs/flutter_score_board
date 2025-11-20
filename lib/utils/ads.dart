@@ -42,14 +42,8 @@ class RewardedAdManager {
     return _bannerAd;
   }
 
-  void loadInterstitialAd() {
+  void loadInterstitialAd([Function()? onAdCompleted]) {
     String adUnitId = dotenv.env['INTERSIAL_AD_UNIT_ID'] ?? '';
-
-    // SystemChrome.setEnabledSystemUIMode(
-    //   SystemUiMode.immersiveSticky,
-    //   overlays: [],
-    // );
-
     InterstitialAd.load(
       adUnitId: adUnitId, // Ganti dengan Unit ID Anda
       request: AdRequest(),
@@ -66,11 +60,17 @@ class RewardedAdManager {
             onAdDismissedFullScreenContent: (ad) {
               // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
               ad.dispose();
+              if (onAdCompleted != null) {
+                onAdCompleted();
+              }
               // loadInterstitialAd(); // Load ulang setelah iklan ditutup
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
               // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
               ad.dispose();
+              if (onAdCompleted != null) {
+                onAdCompleted();
+              }
             },
           );
         },
@@ -79,6 +79,48 @@ class RewardedAdManager {
         },
       ),
     );
+  }
+
+  void loadInterstitialAd2() {
+    String adUnitId = dotenv.env['INTERSIAL_AD_UNIT_ID'] ?? '';
+    InterstitialAd.load(
+      adUnitId: adUnitId, // Ganti dengan Unit ID Anda
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _isInterstitialAdLoaded = true;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          print('InterstitialAd failed to load: $error');
+        },
+      ),
+    );
+  }
+
+  void showInterstitialAd(BuildContext context, Function() onAdCompleted) {
+    if (_isInterstitialAdLoaded) {
+      _interstitialAd!.show();
+      // Tambahkan listener untuk event
+      print('jalan123');
+
+      _interstitialAd!.show();
+      _interstitialAd?.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          ad.dispose();
+          loadInterstitialAd2();
+          // loadInterstitialAd(); // Load ulang setelah iklan ditutup
+        },
+        onAdFailedToShowFullScreenContent: (ad, error) {
+          // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          ad.dispose();
+          loadInterstitialAd2();
+        },
+      );
+    } else {
+      print('Rewarded ad is not yet loaded');
+    }
   }
 
   bool get isInterstitialAdLoaded => _isInterstitialAdLoaded;

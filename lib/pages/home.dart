@@ -271,8 +271,34 @@ class _HomePageState extends State<HomePage> {
               //           MaterialPageRoute(builder: (context) => ChessPage()),
               //         );
               //       },
-              //       child: Text("football scores"),
+              //       child: Text("Football Scores"),
               //     )),
+
+              Container(
+                  padding: const EdgeInsets.all(16),
+                  width:
+                      MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _maxScoreController.text = "11";
+                      _setAController.text = '5';
+                      navigateToScoreboard();
+                    },
+                    child: Text("Pingpong"),
+                  )),
+
+              Container(
+                  padding: const EdgeInsets.all(16),
+                  width:
+                      MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _maxScoreController.text = "21";
+                      _setAController.text = '3';
+                      navigateToScoreboard();
+                    },
+                    child: Text("Tepok Bulu"),
+                  )),
               Container(
                   padding: const EdgeInsets.all(16),
                   width:
