@@ -176,7 +176,7 @@ class _ScoreBoardState extends State<ScoreBoard> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text(_countA > _countb ? 'Win Team A' : 'Win Team B'),
+        title: Text(_countA > _countb ? 'Win ${teamA}' : 'Win ${teamB}'),
         content: Container(
           width: 120,
           height: 50,
@@ -269,16 +269,6 @@ class _ScoreBoardState extends State<ScoreBoard> {
     teamB = (args?['TeamB']);
     // }
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Score Board'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            // Aksi tombol back manual
-            Navigator.pop(context);
-          },
-        ),
-      ),
       body: Container(
         child: Row(
           children: [

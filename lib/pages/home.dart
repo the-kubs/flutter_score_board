@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:scorre_board_flutter/components/input.dart';
 import 'package:scorre_board_flutter/pages/chess.dart';
+import 'package:scorre_board_flutter/pages/football.dart';
 import 'package:scorre_board_flutter/pages/rubic.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,6 +34,21 @@ class _HomePageState extends State<HomePage> {
     ));
     _setAController.text = '3';
     _maxScoreController.text = '21';
+  }
+
+  void navigateToScoreboard() {
+    Navigator.pushNamed(
+      context,
+      '/scoreboard',
+      arguments: {
+        'set': _setAController.text,
+        'maxScore': _maxScoreController.text,
+        'TeamA':
+            _teamAController.text.isNotEmpty ? _teamAController.text : "Team A",
+        'TeamB':
+            _teamBController.text.isNotEmpty ? _teamBController.text : "Team B",
+      },
+    );
   }
 
   @override
@@ -209,6 +225,43 @@ class _HomePageState extends State<HomePage> {
                   child: const Text('Start'),
                 ),
               ),
+              Container(
+                  padding: const EdgeInsets.all(16),
+                  width:
+                      MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _maxScoreController.text = "11";
+                      _setAController.text = '5';
+                      navigateToScoreboard();
+                    },
+                    child: Text("Pingpong"),
+                  )),
+              Container(
+                  padding: const EdgeInsets.all(16),
+                  width:
+                      MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _maxScoreController.text = "21";
+                      _setAController.text = '3';
+                      navigateToScoreboard();
+                    },
+                    child: Text("Tepok Bulu"),
+                  )),
+              Container(
+                  padding: const EdgeInsets.all(16),
+                  width:
+                      MediaQuery.of(context).size.width / (isPortrait ? 1 : 2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FootballPage()),
+                      );
+                    },
+                    child: Text("Football / Soccer"),
+                  )),
               Container(
                   padding: const EdgeInsets.all(16),
                   width:
